@@ -1,0 +1,21 @@
+
+    public void stringLengthSort() {
+        // TODO: 문자열의 길이에 따라 names를 정렬해보자.
+    	Collectoins.sort(names, new StringLengthComparator());
+
+    	
+    	// 익명의 이너 클래스 (Anonymous inner class)
+    	// 람다식으로 쓸 수 도 있지만 조건도 있음 ㅎ
+    	Collections.sort(names, new Compareator<String>()) {
+    		@Override
+    		public int compare(String o1, String o2) {
+    			int len1 = o1.length();
+    			int len2 = o2.length();
+    			return Integer.compare(len1, len2);
+    		}
+    		
+    		System.out.println(names); // [Hi, Java, World, Welcome]
+    	};
+
+    }
+    
