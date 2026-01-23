@@ -1,0 +1,90 @@
+@Retention(RUNTIME)
+@Target(FIELD)
+public @interface ValidationCheck {
+    
+    // 속성을 지정할 때 메서드처럼 사용
+    Type type();
+    
+    enum Type {
+        EMAIL, PASS, POSITIVE_NUM
+    }
+    
+}
+위에를 어노테이션으로 만든거고
+
+public class ValidationChecker {
+    public static StringBuilder validationCheck(Object obj)
+            throws IllegalArgumentException, IllegalAccessException {
+        StringBuilder output = new StringBuilder();
+        // TODO: 02. obj의 field 중 EMAIL, PASS, POSITIVE_NUM에 대한 validation을 처리해서 결과를 output에 담아서 반환하시오.
+        Class<?> clz = obj.getClass();
+        Field[] fields = clz.getDeclaredFields();
+        for(Field f : fields) {
+            f.setAccessible(true);
+            
+            if(!f.isAnnotationPresent(ValidationCheck.class)) continue;
+            
+            ValidationCheck annotation = f.getAnnotation(ValidationCheck.class);
+            
+            System.out.println(annotation);
+            
+            ValidationCheck.Type type = annotation.type();
+            Object vobj = f.get(obj);
+            if(vobj == null) {
+                continue;
+            }
+            
+            if(type.equals(ValidationCheck.Type.EMAIL)) {
+                String value = vobj.toString();
+                if(!value.contains("@")) {
+                    output.append("email 형식 오류: ")
+                    .append(value)
+                    .append("\n");
+                }
+            } else if (type.equals(ValidationCheck.Type.PASS)) {
+                
+            } else if (type.equals(ValidationCheck.Type.POSITIVE_NUM)) {
+                
+            }
+        }
+        // END
+        return output;
+    }
+}
+요거가 구현부
+
+
+오후 12:25
+
+
+
+
+
+
+
+유저테스트쪽
+
+public class UserInfoTest {
+
+    public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException {
+        UserInfo[] infos = {
+                new UserInfo("hong gil dong", "abcdef.net", "@#$", -10000000),
+                new UserInfo("hong gil dong", "abc@def.net", "@#$", -10000000),
+                new UserInfo("hong gil dong", "ab@cdef.net", "123456@#$", -10000000),
+                new UserInfo("hong gil dong", "ab@cdef.net", "123456@#$", 10000000)
+        };
+        for (UserInfo info : infos) {
+            System.out.println(info);
+            // TODO: 04. info의 validation 점검 결과를 확인하고 출력하세요.
+            StringBuilder sb = ValidationChecker.validationCheck(info);
+            if(sb.length() == 0) {
+                System.out.println("점검 결과 없음");
+            } else {
+                System.out.println("점검 결과 있음");
+                System.out.println(sb);
+            }
+            // END
+        }
+    }
+}
+
