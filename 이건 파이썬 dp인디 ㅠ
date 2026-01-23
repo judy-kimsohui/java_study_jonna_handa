@@ -1,0 +1,21 @@
+class Solution(object):
+    def generateParenthesis(self, n):
+        ans = []
+
+        def dfs(left, right, cur):
+
+            # 종료 조건
+            if left == n and right == n:
+                ans.append(cur)
+                return
+            
+            # '(' 추가 가능
+            if left < n:
+                dfs(left + 1, right, cur + "(")
+            
+            # ')'는 '('보다 많아지면 안 됨
+            if right < left:
+                dfs(left, right + 1, cur + ")")
+
+        dfs(0, 0, "")
+        return ans
