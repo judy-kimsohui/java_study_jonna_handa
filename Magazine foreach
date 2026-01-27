@@ -1,0 +1,26 @@
+@Override
+	public Magazine[] getMagazine() {
+		List<Magazine> list = new ArrayList<>();
+
+		for (Book book : books) {
+			if (book instanceof Magazine) {
+				list.add((Magazine) book);
+			}
+		}
+
+		return list.toArray(new Magazine[list.size()]);
+	}
+
+
+	@Override
+	public Book[] getBooks() {
+		List<Book> list = new ArrayList<>();
+
+		for (Book book : books) {
+			if (!(book instanceof Magazine)) {
+				list.add(book);
+			}
+		}
+
+		return list.toArray(new Book[list.size()]);
+	}
