@@ -1,4 +1,14 @@
-package algorithm;
+// #1 174
+// #2 131
+// #3 145
+// #4 155
+// #5 166
+// #6 239
+// #7 166
+// #8 172
+// #9 291
+// #10 464
+
 
 import java.io.*;
 import java.util.*;
@@ -22,9 +32,6 @@ public class 벌꿀채취 {
 			
 			int[][] HoneyList = new int[N][N];
 			int[][] HoneyScore = new int[N][N];			
-			
-			int Best = 0;	// 1등
-			int Great = 0;	// 2등
 
 			// 꿀통 입력
 			for (int r = 0; r < N; r++) {
@@ -34,56 +41,58 @@ public class 벌꿀채취 {
 				}				
 			}
 			
-			// 구간 내 최대 점수 찾기 (슬라이딩 윈도우 구간합)
-			for (int r = 0; r < N; r++) {				
-				for (int start = 0; start <= N - M; start++) {
-					int[] checkList = Arrays.copyOfRange(HoneyList[r], start, start + M);
+			// 구간 내 최대 점수 찾기 (부분집합)
+            for (int r = 0; r < N; r++) {
+                for (int start = 0; start <= N - M; start++) {
+                    int best = 0;
+            
+                    // M칸 값 뽑기
+                    int[] arr = new int[M];
+                    for (int i = 0; i < M; i++) arr[i] = HoneyList[r][start + i];
+            
+                    // 부분집합 전수조사
+                    int limit = 1 << M;
+                    for (int mask = 1; mask < limit; mask++) {
+                        int sum = 0;
+                        int score = 0;
+                        for (int i = 0; i < M; i++) {
+                            if ((mask & (1 << i)) != 0) {
+                                sum += arr[i];
+                                score += arr[i] * arr[i];
+                            }
+                        }
+                        if (sum <= C) best = Math.max(best, score);
+                    }
+            
+                    HoneyScore[r][start] = best;
+                }
+            }
 
-					Arrays.sort(checkList);
-					int s = 0, e = 0, sum = checkList[s], score = (int)Math.pow(checkList[s], 2);
-//					System.out.println(Arrays.toString(checkList));
-					while (s <= M-1) {
-						if (sum <= C) {
-							if(e < M-1) e++;
-//							System.out.println(sum);
-							HoneyScore[r][start] = Math.max(HoneyScore[r][start], score);
-//							for (int k = 0; k < N; k++) {
-//								for (int c = 0; c <= N - M; c++) {
-////									System.out.print(HoneyScore[k][c] + " ");
-//								}
-//							System.out.println();	
-//							}
-//							
-							if (e <= M-1) {
-								sum += checkList[e];
-								score += (int)Math.pow(checkList[e], 2);
-							}
-						}
-						else if (sum > C) {
-							if (s <= M-1) {
-								sum -= checkList[s];
-								score -= (int)Math.pow(checkList[s], 2);								
-							}								
-							s++;
-						}
-					}						
-				}
-			}
 			
-			// Best, Great 찾기
-			for (int r = 0; r < N; r++) {
-				for (int c = 0; c <= N - M; c++) {
-					int Score = HoneyScore[r][c];
-//					System.out.print(HoneyScore[r][c] + " ");
-					if (Best < Score) Best = Score;
-					else {
-						if (Great < Score) Great = Score;
-					}
-				}
+            int Result = 0;	// 최종 합 (최대값)
+            int find1R = 0, find1C = 0;
+            int find2R = 0, find2C = 0;
+			for (int r = 0; r < N; r++) {                               
+                for (int c = 0; c <= N - M; c++) {
+
+                    // 점수1
+                    find1R = r; find1C = c;
+					// System.out.print(HoneyScore[r][c] + " ");
+
+                    // 점수2
+                    for (int rr = r; rr < N; rr++) {
+                        for (int cc = 0; cc <= N - M; cc++) {
+                            find2R = rr; find2C = cc;
+                            if (find1R == find2R && Math.abs(find1C-find2C) < M) continue;
+                            Result = Math.max(Result, HoneyScore[find1R][find1C] + HoneyScore[find2R][find2C]);
+                        }
+                    }
+                }
 //				System.out.println("");
 			}
+
 			
-			sb.append(Best + Great + "\n");
+			sb.append(Result + "\n");
 		}
 
 		System.out.println(sb);		
