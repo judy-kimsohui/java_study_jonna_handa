@@ -30,13 +30,13 @@ public class 풍선사격게임DP {
 
 			    for (int start = 0; start + len <= N; start++) {
 
-							// 구간의 시작점, 끝점
+					// 구간의 시작점, 끝점
 			        int end = start + len - 1;
 			        int max = 0;
 
 			        for (int k = start; k <= end; k++) {
 
-									// 왼쪽, 오른쪽에 풍선 유무 확인
+						// 왼쪽, 오른쪽에 풍선 유무 확인
 			            int leftExist = (start - 1 >= 0) ? balloonL[start - 1] : 0;
 			            int rightExist = (end + 1 < N) ? balloonL[end + 1] : 0;
 
@@ -51,14 +51,14 @@ public class 풍선사격게임DP {
 			            else
 			            	point = balloonL[k]; // 길이 1
 
-									// k를 기준으로 왼쪽 구간, 오른쪽 구간의 최대값
+						// k를 기준으로 왼쪽 구간, 오른쪽 구간의 최대값
 			            int leftRes = (k - 1 >= start) ? DP[start][k - 1] : 0;
 			            int rightRes = (k + 1 <= end) ? DP[k + 1][end] : 0;
 
 			            max = Math.max(max, leftRes + point + rightRes);
 			        }
 
-							// 구간의 최대값 저장
+					// 구간의 최대값 저장
 			        DP[start][end] = max;
 			    }
 			}
