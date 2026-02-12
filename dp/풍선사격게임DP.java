@@ -23,7 +23,7 @@ public class 풍선사격게임DP {
 			balloonL = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();			
 			DP = new int[N][N];			
 			
-			// DP 계산 - 왼쪽이나 오른쪽이 없으면 1로 계산 [3 1 5 8] -> [1 3 1 5 8 1]
+			// DP 계산
 			
 			// k번째 풍선을 마지막에 터뜨릴 때 - 왼쪽 구간 + 오른쪽 구간 + 마지막 계산값
 			for (int len = 1; len <= N; len++) {
