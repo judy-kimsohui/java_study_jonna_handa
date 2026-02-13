@@ -5,6 +5,18 @@ import java.io.*;
 
 public class 원자소멸시뮬레이션 {
 	
+	static class Point {
+		int r, c;
+		int dir;
+		int energy;
+		public Point(int r, int c, int dir, int E) {
+			this.r = r;
+			this.c = c;
+			this.dir = dir;
+			this.energy = E;
+		}
+	}
+	
 	public static void main(String[] args) throws Exception {
 		
 		// 원자들은 2차원 평면에서 이동하고,
@@ -28,6 +40,8 @@ public class 원자소멸시뮬레이션 {
 	    int[] dr = {1, -1, 0, 0};
 	    int[] dc = {0, 0, -1, 1};
 	    
+	    ArrayDeque<Point> pointQ;
+	    
 	    int T = Integer.parseInt(br.readLine());
 	    for (int t = 1; t <= T; t++) {
 	    	
@@ -35,16 +49,59 @@ public class 원자소멸시뮬레이션 {
 	    	//  x 위치, y 위치, 이동 방향, 보유 에너지 K
 	    	
 	    	// 원자들은 2차원 평면 위에서 움직이며 원자들이 움직일 수 있는 좌표의 범위에 제한은 없다
-	    	int[][] map = new int[2001][2001];
+
+	    	// int key = nr * 4001 + nc;
+	    	HashMap<Integer, ArrayList<Point>> visitedL = new HashMap<>();
+	    	pointQ = new ArrayDeque<>();
 	    	
-	    	st = new StringTokenizer(br.readLine());
-	    	int r = (Integer.parseInt(st.nextToken())+1000) << 1;
-	    	int c = (Integer.parseInt(st.nextToken())+1000) << 1;
-	    	int dir = Integer.parseInt(st.nextToken());
-	    	int k = Integer.parseInt(st.nextToken());
+	    	for (int n = 0; n < N; n++) {
+	    		st = new StringTokenizer(br.readLine());
+	    		int c = (Integer.parseInt(st.nextToken())+1000) << 1;
+	    		int r = (Integer.parseInt(st.nextToken())+1000) << 1;
+	    		int dir = Integer.parseInt(st.nextToken());
+	    		int E = Integer.parseInt(st.nextToken());
+	    		
+	    		if ((r >= 4000 && dir == 0) || (r <= 0 && dir == 1) || (c >= 4000 && dir == 3) || (c <= 0 && dir == 2)) continue;
+	    		pointQ.offer(new Point(r, c, dir, E));	    		
+	    	}
+	    	
+	    	int EnergySum = 0, count = 0;
+	    	for (int time = 0; time < 4000; time++) {
+	    		
+    			if (count >= N) break;
+
+    			visitedL = new HashMap<>();
+    			int length = pointQ.size();
+	    		for (int p = 0; p < length; p++) {	    			
+	    				    	
+	    			Point point = pointQ.poll();	    			
+    				int nr = point.r + dr[point.dir];
+    				int nc = point.c + dc[point.dir]; 
+    				
+    				if (nr < 0 || nr > 4000 || nc < 0 || nc > 4000) continue;
+
+    				int key = nr * 4001 + nc;			
+    				visitedL.computeIfAbsent(key, k -> new ArrayList<>()).add(point);    			
+    				point.r = nr;
+    				point.c = nc;
+	    		}
+	    		
+	    		// 충돌 처리
+	    		for (ArrayList<Point> list : visitedL.values()) {
+	    		    if (list.size() >= 2) {
+	    		        for (Point p : list) {
+	    		            EnergySum += p.energy;
+	    		        }
+	    		    } else {
+	    		        pointQ.offer(list.get(0));
+	    		    }
+	    		}
+	    	}
+	    	
+	    	sb.append("#" + t + " " + EnergySum + "\n");	    	
 	    	
 	    }
 	    
-		
+		System.out.println(sb);
 	}	
 }
