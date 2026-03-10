@@ -1,0 +1,27 @@
+# [김소희] week6 BJ_5639 / 이진 검색 트리 G5
+
+preorder = []
+
+# 입력 받기 (-1이면 종료)
+for _ in range(10000):
+    n = int(input())
+    if n == -1:
+        break
+    preorder.append(n)
+
+idx = 0
+
+def postorder(limit):
+    global idx
+    if idx >= len(preorder) or preorder[idx] > limit:
+        return
+
+    root = preorder[idx]
+    idx += 1
+
+    postorder(root)   # 왼쪽 subtree
+    postorder(limit)  # 오른쪽 subtree
+
+    print(root)
+
+postorder(float('inf'))
